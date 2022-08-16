@@ -13,6 +13,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
+	"g.echo.tech/dev/core/log"
 	"io"
 	"net"
 	"strconv"
@@ -619,6 +620,11 @@ func (mc *mysqlConn) startWatcher() {
 
 			select {
 			case <-ctx.Done():
+				defer func() {
+					if r := recover(); r != nil {
+						log.I(ctx).Msgf("mysql panic: %v, \n get ctx: %+v, \n mc:%+v \n", r, ctx, mc)
+					}
+				}()
 				mc.cancel(ctx.Err())
 			case <-finished:
 			case <-mc.closech:
