@@ -610,8 +610,15 @@ func (mc *mysqlConn) startWatcher() {
 	finished := make(chan struct{})
 	mc.finished = finished
 	go func() {
+
+		var ctx context.Context
+		defer func() {
+			if r := recover(); r != nil {
+				log.I(ctx).Msgf("mysql panic: %v, \n get ctx: %+v, \n mc:%+v \n", r, ctx, mc)
+			}
+		}()
+
 		for {
-			var ctx context.Context
 			select {
 			case ctx = <-watcher:
 			case <-mc.closech:
@@ -620,11 +627,6 @@ func (mc *mysqlConn) startWatcher() {
 
 			select {
 			case <-ctx.Done():
-				defer func() {
-					if r := recover(); r != nil {
-						log.I(ctx).Msgf("mysql panic: %v, \n get ctx: %+v, \n mc:%+v \n", r, ctx, mc)
-					}
-				}()
 				mc.cancel(ctx.Err())
 			case <-finished:
 			case <-mc.closech:
