@@ -580,6 +580,7 @@ func (stmt *mysqlStmt) ExecContext(ctx context.Context, args []driver.NamedValue
 }
 
 func (mc *mysqlConn) watchCancel(ctx context.Context) error {
+	log.I(ctx).Msgf("watchCancel: %+v", ctx)
 	if mc.watching {
 		// Reach here if canceled,
 		// so the connection is already invalid
@@ -598,6 +599,8 @@ func (mc *mysqlConn) watchCancel(ctx context.Context) error {
 	if mc.watcher == nil {
 		return nil
 	}
+
+	log.I(ctx).Msgf("watchCancel start: %+v", ctx)
 
 	mc.watching = true
 	mc.watcher <- ctx
