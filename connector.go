@@ -11,6 +11,7 @@ package mysql
 import (
 	"context"
 	"database/sql/driver"
+	"g.echo.tech/dev/core/log"
 	"net"
 )
 
@@ -65,6 +66,7 @@ func (c *connector) Connect(ctx context.Context) (driver.Conn, error) {
 
 	// Call startWatcher for context support (From Go 1.8)
 	mc.startWatcher()
+	log.I(ctx).Msgf("watchCancel in Conn: %+v", ctx)
 	if err := mc.watchCancel(ctx); err != nil {
 		mc.cleanup()
 		return nil, err
