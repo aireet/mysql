@@ -618,6 +618,8 @@ func (mc *mysqlConn) startWatcher() {
 			}
 		}()
 
+		log.I(ctx).Msgf("start watcher: %+v", ctx)
+
 		for {
 			select {
 			case ctx = <-watcher:
