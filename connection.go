@@ -618,20 +618,23 @@ func (mc *mysqlConn) startWatcher() {
 			}
 		}()
 
-		log.I(ctx).Msgf("start watcher: %+v", ctx)
-
 		for {
 			select {
 			case ctx = <-watcher:
+				log.I(ctx).Msgf("watcher get ctx: %+v", ctx)
 			case <-mc.closech:
+				log.I(ctx).Msgf("watcher close")
 				return
 			}
 
 			select {
 			case <-ctx.Done():
+				log.I(ctx).Msgf("watcher done ctx: %+v", ctx)
 				mc.cancel(ctx.Err())
 			case <-finished:
+				log.I(ctx).Msgf("watcher finished")
 			case <-mc.closech:
+				log.I(ctx).Msgf("watcher closech")
 				return
 			}
 		}
